@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Is It Down? — Website Status Checker</title>
+    
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" href="/website-down/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/website-down/favicon.svg" />
+  <link rel="shortcut icon" href="/website-down/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/website-down/apple-touch-icon.png" />
+  
+  <!-- SEO Meta -->
+  <meta name="description" content="Check if a website is down or just unavailable for you. Instant real-time uptime check for any URL — fast, free, and reliable." />
+  <meta name="keywords" content="is website down, website down checker, is it down, site status, uptime checker, URL checker, is it just me, website not loading" />
+  <meta name="author" content="Is It Down?" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://alit3cc.github.io/website-down/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Is It Down? — Website Status Checker" />
+  <meta property="og:description" content="Check if a website is down or just unavailable for you. Instant real-time uptime check for any URL." />
+  <meta property="og:url" content="https://alit3cc.github.io/website-down/" />
+  <meta property="og:image" content="https://alit3cc.github.io/website-down/og-image.png" />
+  <meta property="og:site_name" content="Is It Down?" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Is It Down? — Website Status Checker" />
+  <meta name="twitter:description" content="Check if a website is down or just unavailable for you." />
+  <meta name="twitter:image" content="https://alit3cc.github.io/website-down/og-image.png" />
+
+  <!-- PWA -->
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Is It Down?" />
+
+  <!-- Manifest inline via JS (avoids extra file) -->
+  <link id="manifest-placeholder" rel="manifest" href="#" />
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Is It Down?",
+    "description": "Check if a website is down or just unavailable for you. Instant real-time uptime check for any URL.",
+    "url": "https://alit3cc.github.io/website-down/",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "All",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Check if a website is down",
+      "Real-time URL status checker",
+      "Response time measurement",
+      "Works on all devices",
+      "No registration required"
+    ]
+  }
+  </script>
+
+  <style>
+    /* ─── Design Tokens ─────────────────────────────── */
+    :root {
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --font-mono: 'Menlo', 'Monaco', 'Cascadia Code', 'Consolas', 'Courier New', monospace;
+      --accent: #0070f3;
+      --accent-hover: #0060df;
+      --accent-glow: rgba(0,112,243,0.18);
+      --radius: 8px;
+      --radius-sm: 5px;
+      --transition: 0.18s ease;
+    }
+
+    /* Light mode */
+    :root, [data-theme="light"] {
+      --bg: #ffffff;
+      --bg-secondary: #fafafa;
+      --bg-card: #ffffff;
+      --border: #eaeaea;
+      --border-hover: #999;
+      --text-primary: #000000;
+      --text-secondary: #444;
+      --text-muted: #666;
+      --text-mono: #111;
+      --shadow: 0 2px 8px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04);
+      --shadow-input: 0 0 0 1px #eaeaea;
+      --shadow-focus: 0 0 0 2px var(--accent);
+      --up-bg: #f0fdf4;
+      --up-border: #bbf7d0;
+      --up-text: #15803d;
+      --up-dot: #22c55e;
+      --down-bg: #fff1f2;
+      --down-border: #fecdd3;
+      --down-text: #be123c;
+      --down-dot: #f43f5e;
+      --badge-bg: #f3f4f6;
+      --badge-text: #374151;
+    }
+
+    /* Dark mode */
+    [data-theme="dark"] {
+      --bg: #000000;
+      --bg-secondary: #0a0a0a;
+      --bg-card: #111111;
+      --border: #222222;
+      --border-hover: #555;
+      --text-primary: #ededed;
+      --text-secondary: #a0a0a0;
+      --text-muted: #777;
+      --text-mono: #d4d4d4;
+      --shadow: 0 2px 8px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
+      --shadow-input: 0 0 0 1px #333;
+      --shadow-focus: 0 0 0 2px var(--accent);
+      --up-bg: rgba(34,197,94,0.08);
+      --up-border: rgba(34,197,94,0.25);
+      --up-text: #4ade80;
+      --up-dot: #22c55e;
+      --down-bg: rgba(244,63,94,0.08);
+      --down-border: rgba(244,63,94,0.25);
+      --down-text: #fb7185;
+      --down-dot: #f43f5e;
+      --badge-bg: #1a1a1a;
+      --badge-text: #a0a0a0;
+    }
+
+    /* ─── Reset ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: var(--font);
+      background-color: var(--bg);
+      color: var(--text-primary);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { font-family: var(--font); cursor: pointer; border: none; background: none; }
+    input { font-family: var(--font); }
+
+    /* ─── Layout ─────────────────────────────────────── */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      height: 60px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      backdrop-filter: saturate(180%) blur(12px);
+      -webkit-backdrop-filter: saturate(180%) blur(12px);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+
+    .nav-logo-icon {
+      width: 26px;
+      height: 26px;
+      background: var(--text-primary);
+      border-radius: 6px;
+      display: grid;
+      place-items: center;
+    }
+
+    .nav-logo-icon svg { width: 14px; height: 14px; }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .theme-toggle {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      display: grid;
+      place-items: center;
+      color: var(--text-secondary);
+      transition: var(--transition);
+      background: transparent;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--border-hover);
+      color: var(--text-primary);
+      background: var(--bg-secondary);
+    }
+
+    .theme-toggle svg { width: 16px; height: 16px; }
+
+    /* ─── Main Content ───────────────────────────────── */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 80px 24px 60px;
+    }
+
+    .hero {
+      width: 100%;
+      max-width: 580px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      background: var(--badge-bg);
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--badge-text);
+      letter-spacing: 0.01em;
+      margin-bottom: 20px;
+    }
+
+    .hero-badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    .hero-title {
+      font-size: clamp(36px, 6vw, 58px);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.08;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, var(--accent), #7c3aed);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      max-width: 420px;
+      margin-bottom: 40px;
+    }
+
+    /* ─── Checker Form ───────────────────────────────── */
+    .checker {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .url-input-wrap {
+      flex: 1;
+      position: relative;
+    }
+
+    .url-prefix {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-muted);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .url-input {
+      width: 100%;
+      height: 46px;
+      padding: 0 14px 0 52px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 14.5px;
+      font-family: var(--font-mono);
+      outline: none;
+      box-shadow: var(--shadow-input);
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+
+    .url-input:focus {
+      border-color: var(--accent);
+      box-shadow: var(--shadow-focus);
+    }
+
+    .check-btn {
+      height: 46px;
+      padding: 0 20px;
+      border-radius: var(--radius);
+      background: var(--text-primary);
+      color: var(--bg);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+      transition: opacity var(--transition), transform var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-shrink: 0;
+    }
+
+    .check-btn:hover:not(:disabled) { opacity: 0.82; }
+    .check-btn:active:not(:disabled) { transform: scale(0.97); }
+    .check-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .check-btn svg { width: 15px; height: 15px; }
+
+    /* ─── Result Card ────────────────────────────────── */
+    .result-wrap {
+      width: 100%;
+      animation: fadeSlide 0.22s ease;
+    }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-card {
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .result-status {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .result-status.up {
+      background: var(--up-bg);
+      border-color: var(--up-border);
+    }
+
+    .result-status.down {
+      background: var(--down-bg);
+      border-color: var(--down-border);
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .status-dot.up { background: var(--up-dot); box-shadow: 0 0 0 3px rgba(34,197,94,0.2); }
+    .status-dot.down { background: var(--down-dot); box-shadow: 0 0 0 3px rgba(244,63,94,0.2); }
+
+    .status-label {
+      font-size: 15px;
+      font-weight: 600;
+      flex: 1;
+    }
+
+    .status-label.up { color: var(--up-text); }
+    .status-label.down { color: var(--down-text); }
+
+    .status-url {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      word-break: break-all;
+      text-align: right;
+      max-width: 200px;
+    }
+
+    .result-meta {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      divide-x: 1px solid var(--border);
+    }
+
+    .meta-item {
+      padding: 14px 18px;
+      border-right: 1px solid var(--border);
+    }
+
+    .meta-item:last-child { border-right: none; }
+
+    .meta-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .meta-value {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .meta-value.good { color: var(--up-text); }
+    .meta-value.bad  { color: var(--down-text); }
+
+    .result-terminal {
+      padding: 14px 18px;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+    }
+
+    .terminal-line {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      display: flex;
+      gap: 8px;
+    }
+
+    .terminal-prompt { color: var(--accent); flex-shrink: 0; }
+
+    /* ─── Loading State ──────────────────────────────── */
+    .loading-card {
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      padding: 24px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .loading-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .loading-bar {
+      height: 3px;
+      border-radius: 100px;
+      background: var(--border);
+      overflow: hidden;
+    }
+
+    .loading-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 100px;
+      animation: loadbar 1.8s ease-in-out infinite;
+    }
+
+    @keyframes loadbar {
+      0%   { width: 0%; margin-left: 0%; }
+      50%  { width: 60%; margin-left: 20%; }
+      100% { width: 0%; margin-left: 100%; }
+    }
+
+    /* ─── FAQ / SEO Section ──────────────────────────── */
+    .section-divider {
+      width: 100%;
+      max-width: 580px;
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 60px 0;
+    }
+
+    .faq {
+      width: 100%;
+      max-width: 580px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .faq-title {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .faq-item {
+      border-top: 1px solid var(--border);
+    }
+
+    .faq-item:last-child { border-bottom: 1px solid var(--border); }
+
+    .faq-q {
+      width: 100%;
+      text-align: left;
+      padding: 16px 0;
+      font-size: 14.5px;
+      font-weight: 500;
+      color: var(--text-primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      transition: color var(--transition);
+      background: transparent;
+    }
+
+    .faq-q:hover { color: var(--accent); }
+
+    .faq-q svg {
+      width: 16px;
+      height: 16px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      transition: transform var(--transition);
+    }
+
+    .faq-item.open .faq-q svg { transform: rotate(45deg); }
+
+    .faq-a {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.28s ease, padding-bottom 0.28s ease;
+    }
+
+    .faq-item.open .faq-a {
+      max-height: 200px;
+      padding-bottom: 16px;
+    }
+
+    /* ─── Footer ─────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .footer-text {
+      font-size: 12.5px;
+      color: var(--text-muted);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 16px;
+    }
+
+    .footer-links a {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      transition: color var(--transition);
+    }
+
+    .footer-links a:hover { color: var(--text-primary); }
+
+    /* ─── PWA Install Banner ─────────────────────────── */
+    .install-banner {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(120px);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 200;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      white-space: nowrap;
+      max-width: calc(100vw - 40px);
+    }
+
+    .install-banner.visible { transform: translateX(-50%) translateY(0); }
+
+    .install-banner-text {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+    }
+
+    .install-banner-text strong { color: var(--text-primary); font-weight: 600; }
+
+    .install-btn {
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--accent);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      transition: opacity var(--transition);
+      flex-shrink: 0;
+    }
+
+    .install-btn:hover { opacity: 0.85; }
+
+    .install-close {
+      width: 26px;
+      height: 26px;
+      display: grid;
+      place-items: center;
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      transition: color var(--transition), background var(--transition);
+      background: transparent;
+      flex-shrink: 0;
+    }
+
+    .install-close:hover { color: var(--text-primary); background: var(--bg-secondary); }
+    .install-close svg { width: 14px; height: 14px; }
+
+    /* ─── Error State ────────────────────────────────── */
+    .error-card {
+      border-radius: var(--radius);
+      border: 1px solid var(--down-border);
+      background: var(--down-bg);
+      padding: 14px 18px;
+      box-shadow: var(--shadow);
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .error-icon { color: var(--down-dot); flex-shrink: 0; margin-top: 1px; }
+    .error-icon svg { width: 16px; height: 16px; }
+
+    .error-text { font-size: 13.5px; color: var(--down-text); line-height: 1.5; }
+
+    /* ─── Responsive ─────────────────────────────────── */
+    @media (max-width: 520px) {
+      main { padding: 56px 16px 48px; }
+      .nav { padding: 0 16px; }
+      footer { padding: 18px 16px; }
+
+      .input-row { flex-direction: column; }
+      .check-btn { width: 100%; justify-content: center; }
+
+      .result-meta { grid-template-columns: 1fr 1fr; }
+      .meta-item:nth-child(2) { border-right: none; }
+      .meta-item:nth-child(3) { grid-column: span 2; border-top: 1px solid var(--border); border-right: none; }
+
+      .status-url { display: none; }
+
+      .hero-title { letter-spacing: -0.03em; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body data-theme="auto">
+
+<!-- Navigation -->
+<nav class="nav" aria-label="Main navigation">
+  <a href="/" class="nav-logo" aria-label="Is It Down? Home">
+    <div class="nav-logo-icon" aria-hidden="true">
+      <svg fill="none" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.8" style="stroke:var(--bg)"/>
+        <path d="M4.5 7h5M7 4.5v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="stroke:var(--bg)"/>
+      </svg>
+    </div>
+    Is It Down?
+  </a>
+  <div class="nav-right">
+    <button class="theme-toggle" id="themeBtn" aria-label="Toggle dark/light mode" title="Toggle theme">
+      <svg id="iconSun" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+      </svg>
+      <svg id="iconMoon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true" style="display:none">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<!-- Main -->
+<main id="main" role="main">
+  <section class="hero" aria-labelledby="hero-heading">
+
+    <div class="hero-badge" aria-label="Real-time checker">
+      <span class="hero-badge-dot" aria-hidden="true"></span>
+      Real-time status checker
+    </div>
+
+    <h1 class="hero-title" id="hero-heading">
+      Is the website<br><span>down?</span>
+    </h1>
+
+    <p class="hero-sub">
+      Enter any URL to instantly check if a website is offline — or if it's just you. No sign-up. No tracking.
+    </p>
+
+    <!-- Checker -->
+    <div class="checker" role="search" aria-label="Website status checker">
+      <div class="input-row">
+        <div class="url-input-wrap">
+          <span class="url-prefix" aria-hidden="true">https://</span>
+          <label for="urlInput" class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Website URL to check</label>
+          <input
+            type="url"
+            id="urlInput"
+            class="url-input"
+            autocomplete="url"
+            autocorrect="off"
+            autocapitalize="none"
+            spellcheck="false"
+            aria-label="Enter website URL"
+            inputmode="url"
+          />
+        </div>
+        <button class="check-btn" id="checkBtn" aria-label="Check website status">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+          Check
+        </button>
+      </div>
+
+      <!-- Result Area -->
+      <div id="resultArea" role="region" aria-live="polite" aria-label="Check results"></div>
+    </div>
+  </section>
+
+  <hr class="section-divider" aria-hidden="true" />
+
+  <!-- FAQ / SEO Content -->
+  <section class="faq" aria-labelledby="faq-heading">
+    <p class="faq-title" id="faq-heading">Frequently asked questions</p>
+
+    <div class="faq-item" role="listitem">
+      <button class="faq-q" aria-expanded="false">
+        How does this website down checker work?
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg>
+      </button>
+      <p class="faq-a">We send a live HTTP request to the URL you enter from our servers. If the server responds with a valid HTTP status code, the site is up. If the connection times out or returns a server error, the site is down. This is done in real time — no cached results.</p>
+    </div>
+
+    <div class="faq-item" role="listitem">
+      <button class="faq-q" aria-expanded="false">
+        What's the difference between "down for me" and "down for everyone"?
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg>
+      </button>
+      <p class="faq-a">When we check from our servers and the site is reachable, but you can't access it, the issue is likely local — try clearing your browser cache, flushing DNS, or switching networks. If our check also fails, the site is globally down for everyone.</p>
+    </div>
+
+    <div class="faq-item" role="listitem">
+      <button class="faq-q" aria-expanded="false">
+        What does the HTTP status code mean?
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg>
+      </button>
+      <p class="faq-a">HTTP 200 means the page loaded successfully. 301/302 is a redirect (site is up). 403 means access is forbidden (but the server is running). 404 is not found. 500–503 indicates a server error — the site is likely down. Timeouts mean no response at all.</p>
+    </div>
+
+    <div class="faq-item" role="listitem">
+      <button class="faq-q" aria-expanded="false">
+        Why might response time be slow even if the site is up?
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg>
+      </button>
+      <p class="faq-a">High response times usually mean the server is overloaded, there's a network bottleneck, or the website is located far from our checking server. Times above 2,000ms typically indicate performance issues even if the site technically responds.</p>
+    </div>
+  </section>
+</main>
+
+<!-- Footer -->
+<footer>
+  <p class="footer-text">© <span id="yearSpan"></span> Is It Down? — Instant website status checker</p>
+  <nav class="footer-links" aria-label="Footer navigation">
+    <a href="/" title="Check if a website is down">Home</a>
+    <a href="#main" title="Check website uptime now">Check Now</a>
+  </nav>
+</footer>
+
+<!-- PWA Install Banner -->
+<div class="install-banner" id="installBanner" role="complementary" aria-label="Install app" hidden>
+  <p class="install-banner-text"><strong>Add to Home Screen</strong> for instant checks</p>
+  <button class="install-btn" id="installBtnAction">Install</button>
+  <button class="install-close" id="installClose" aria-label="Dismiss install prompt">
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+    </svg>
+  </button>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── Year ─────────────────────────────────────────── */
+  document.getElementById('yearSpan').textContent = new Date().getFullYear();
+
+  /* ── Theme ────────────────────────────────────────── */
+  const body = document.body;
+  const themeBtn = document.getElementById('themeBtn');
+  const iconSun  = document.getElementById('iconSun');
+  const iconMoon = document.getElementById('iconMoon');
+
+  function getPreferredTheme() {
+    const stored = localStorage.getItem('theme');
+    if (stored) return stored;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+
+  function applyTheme(theme) {
+    body.setAttribute('data-theme', theme);
+    if (theme === 'dark') {
+      iconSun.style.display = 'none';
+      iconMoon.style.display = '';
+    } else {
+      iconSun.style.display = '';
+      iconMoon.style.display = 'none';
+    }
+    document.querySelector('meta[name="theme-color"][media*="dark"]').content = theme === 'dark' ? '#000000' : '#ffffff';
+    document.querySelector('meta[name="theme-color"][media*="light"]').content = theme === 'dark' ? '#000000' : '#ffffff';
+  }
+
+  applyTheme(getPreferredTheme());
+
+  themeBtn.addEventListener('click', () => {
+    const curr = body.getAttribute('data-theme');
+    const next = curr === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('theme', next);
+    applyTheme(next);
+  });
+
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (!localStorage.getItem('theme')) applyTheme(e.matches ? 'dark' : 'light');
+  });
+
+  /* ── URL Normalizer ───────────────────────────────── */
+  function normalizeURL(raw) {
+    raw = raw.trim();
+    if (!raw) return null;
+
+    // Strip trailing slashes for cleanliness
+    // Add protocol if missing
+    if (!/^https?:\/\//i.test(raw)) {
+      raw = 'https://' + raw;
+    }
+
+    try {
+      const u = new URL(raw);
+      if (!u.hostname || !u.hostname.includes('.')) return null;
+      return u.href;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function getDisplayURL(href) {
+    try {
+      const u = new URL(href);
+      return u.hostname + (u.pathname !== '/' ? u.pathname : '');
+    } catch (_) { return href; }
+  }
+
+  /* ── Status Check ─────────────────────────────────── */
+  // We use a combination of strategies:
+  // 1. allorigins.win proxy (returns JSON with status, headers, response time)
+  // 2. Fallback: direct no-cors fetch (can confirm reachability but no status code)
+
+  async function checkURL(url) {
+    const start = performance.now();
+
+    try {
+      // Primary: allorigins proxy (gives us HTTP status + content)
+      const proxyURL = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`;
+      const res = await fetch(proxyURL, { signal: AbortSignal.timeout(9000) });
+      const elapsed = Math.round(performance.now() - start);
+
+      if (res.ok) {
+        const json = await res.json();
+        const httpStatus = json.status?.http_code || 200;
+
+        // Treat 200–399 as up; 400+ as potentially down (except 403/405 which means server exists)
+        const serverExists = [403, 405, 429, 401].includes(httpStatus);
+        const isUp = (httpStatus >= 200 && httpStatus < 400) || serverExists;
+
+        return {
+          up: isUp,
+          status: httpStatus,
+          time: elapsed,
+          method: 'HTTP',
+          note: statusNote(httpStatus)
+        };
+      }
+    } catch (e1) {
+      // Primary failed: try fallback
+    }
+
+    // Fallback: no-cors fetch — if it doesn't throw network error, server exists
+    const start2 = performance.now();
+    try {
+      await fetch(url, {
+        mode: 'no-cors',
+        cache: 'no-store',
+        signal: AbortSignal.timeout(7000)
+      });
+      const elapsed2 = Math.round(performance.now() - start2);
+      // no-cors fetch success means server responded (we just can't read the response)
+      return { up: true, status: '2xx', time: elapsed2, method: 'Reachability', note: 'Server responded' };
+    } catch (e2) {
+      const elapsed2 = Math.round(performance.now() - start2);
+      if (e2.name === 'AbortError' || e2.name === 'TimeoutError') {
+        return { up: false, status: 'Timeout', time: elapsed2, method: 'HTTP', note: 'Request timed out' };
+      }
+      return { up: false, status: 'Error', time: elapsed2, method: 'HTTP', note: 'Connection refused or DNS failed' };
+    }
+  }
+
+  function statusNote(code) {
+    const codes = {
+      200: 'OK', 201: 'Created', 204: 'No Content',
+      301: 'Moved Permanently', 302: 'Found', 304: 'Not Modified',
+      400: 'Bad Request', 401: 'Unauthorized', 403: 'Forbidden',
+      404: 'Not Found', 405: 'Method Not Allowed', 429: 'Too Many Requests',
+      500: 'Internal Server Error', 502: 'Bad Gateway',
+      503: 'Service Unavailable', 504: 'Gateway Timeout'
+    };
+    return codes[code] || (code >= 200 && code < 300 ? 'Success' : code >= 500 ? 'Server Error' : 'HTTP Error');
+  }
+
+  function timeLabel(ms) {
+    if (ms < 400) return 'Fast';
+    if (ms < 1200) return 'Normal';
+    if (ms < 2500) return 'Slow';
+    return 'Very Slow';
+  }
+
+  function timeClass(ms) {
+    if (ms < 1200) return 'good';
+    return 'bad';
+  }
+
+  /* ── Render Results ───────────────────────────────── */
+  function renderLoading() {
+    return `
+      <div class="result-wrap">
+        <div class="loading-card" role="status" aria-label="Checking website...">
+          <div class="loading-row">
+            <div class="spinner" aria-hidden="true"></div>
+            <span class="loading-text">Checking server response…</span>
+          </div>
+          <div class="loading-bar" aria-hidden="true">
+            <div class="loading-bar-fill"></div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderResult(result, displayURL) {
+    const upClass = result.up ? 'up' : 'down';
+    const statusText = result.up
+      ? `${displayURL} is <strong>online</strong>`
+      : `${displayURL} appears to be <strong>offline</strong>`;
+    const statusEmoji = result.up ? '🟢' : '🔴';
+
+    return `
+      <div class="result-wrap">
+        <article class="result-card" aria-label="Status result for ${displayURL}">
+          <div class="result-status ${upClass}" role="status">
+            <span class="status-dot ${upClass}" aria-hidden="true"></span>
+            <span class="status-label ${upClass}">${statusEmoji} ${result.up ? 'Online' : 'Offline'}</span>
+            <span class="status-url" title="${displayURL}">${displayURL}</span>
+          </div>
+          <div class="result-meta">
+            <div class="meta-item">
+              <p class="meta-label">HTTP Status</p>
+              <p class="meta-value ${result.up ? 'good' : 'bad'}">${result.status}</p>
+            </div>
+            <div class="meta-item">
+              <p class="meta-label">Response Time</p>
+              <p class="meta-value ${timeClass(result.time)}">${result.time}ms</p>
+            </div>
+            <div class="meta-item">
+              <p class="meta-label">Speed</p>
+              <p class="meta-value ${timeClass(result.time)}">${timeLabel(result.time)}</p>
+            </div>
+          </div>
+          <div class="result-terminal">
+            <p class="terminal-line">
+              <span class="terminal-prompt">$</span>
+              <span>${statusEmoji} ${result.note} — checked via ${result.method}</span>
+            </p>
+          </div>
+        </article>
+      </div>
+    `;
+  }
+
+  function renderError(msg) {
+    return `
+      <div class="result-wrap">
+        <div class="error-card" role="alert">
+          <span class="error-icon" aria-hidden="true">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/><path stroke-linecap="round" d="M12 8v4M12 16h.01"/>
+            </svg>
+          </span>
+          <p class="error-text">${msg}</p>
+        </div>
+      </div>
+    `;
+  }
+
+  /* ── Check Logic ──────────────────────────────────── */
+  const urlInput = document.getElementById('urlInput');
+  const checkBtn = document.getElementById('checkBtn');
+  const resultArea = document.getElementById('resultArea');
+
+  async function doCheck() {
+    const raw = urlInput.value;
+    const normalized = normalizeURL(raw);
+
+    if (!normalized) {
+      resultArea.innerHTML = renderError('Please enter a valid URL — e.g. <strong>github.com</strong> or <strong>https://example.com</strong>');
+      return;
+    }
+
+    checkBtn.disabled = true;
+    resultArea.innerHTML = renderLoading();
+
+    try {
+      const result = await checkURL(normalized);
+      resultArea.innerHTML = renderResult(result, getDisplayURL(normalized));
+    } catch (err) {
+      resultArea.innerHTML = renderError('An unexpected error occurred. Please try again.');
+    } finally {
+      checkBtn.disabled = false;
+    }
+  }
+
+  checkBtn.addEventListener('click', doCheck);
+
+  urlInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') doCheck();
+  });
+
+  // Allow paste-and-check: auto-strip protocol from display
+  urlInput.addEventListener('input', () => {
+    // Remove leading https:// or http:// if user typed it (since prefix is shown)
+    const val = urlInput.value;
+    if (/^https?:\/\//i.test(val)) {
+      urlInput.value = val.replace(/^https?:\/\//i, '');
+    }
+  });
+
+  /* ── FAQ Accordion ────────────────────────────────── */
+  document.querySelectorAll('.faq-item').forEach((item) => {
+    const btn = item.querySelector('.faq-q');
+    btn.addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      // Close all
+      document.querySelectorAll('.faq-item.open').forEach(el => {
+        el.classList.remove('open');
+        el.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+      });
+      // Toggle current
+      if (!isOpen) {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+
+  /* ── PWA Manifest (inline) ────────────────────────── */
+  const manifest = {
+    name: 'Is It Down? — Website Status Checker',
+    short_name: 'Is It Down?',
+    description: 'Check if any website is down or just unavailable for you.',
+    start_url: '/',
+    display: 'standalone',
+    background_color: '#000000',
+    theme_color: '#000000',
+    orientation: 'portrait-primary',
+    categories: ['utilities', 'productivity'],
+    icons: [
+      {
+        src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='112' fill='%23000'/><circle cx='256' cy='256' r='140' fill='none' stroke='%230070f3' stroke-width='36'/><path d='M256 160v96l60 60' stroke='%23fff' stroke-width='32' stroke-linecap='round' stroke-linejoin='round'/></svg>",
+        sizes: '512x512',
+        type: 'image/svg+xml',
+        purpose: 'any maskable'
+      }
+    ],
+    screenshots: [],
+    lang: 'en',
+    dir: 'ltr'
+  };
+
+  const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+  const manifestURL = URL.createObjectURL(blob);
+  document.getElementById('manifest-placeholder').href = manifestURL;
+
+  /* ── Service Worker ───────────────────────────────── */
+  if ('serviceWorker' in navigator) {
+    const sw = `
+      const CACHE = 'isitdown-v1';
+      const SHELL = [self.location.pathname];
+
+      self.addEventListener('install', e => {
+        e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)));
+        self.skipWaiting();
+      });
+
+      self.addEventListener('activate', e => {
+        e.waitUntil(caches.keys().then(keys =>
+          Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+        ));
+        self.clients.claim();
+      });
+
+      self.addEventListener('fetch', e => {
+        if (e.request.method !== 'GET') return;
+        if (e.request.url.includes('allorigins') || e.request.url.includes('api.')) return;
+        e.respondWith(
+          caches.match(e.request).then(cached => {
+            const network = fetch(e.request).then(res => {
+              if (res.ok) caches.open(CACHE).then(c => c.put(e.request, res.clone()));
+              return res;
+            });
+            return cached || network;
+          })
+        );
+      });
+    `;
+    const swBlob = new Blob([sw], { type: 'application/javascript' });
+    const swURL = URL.createObjectURL(swBlob);
+    navigator.serviceWorker.register(swURL, { scope: '/' }).catch(() => {});
+  }
+
+  /* ── PWA Install Prompt ───────────────────────────── */
+  let deferredPrompt = null;
+  const installBanner = document.getElementById('installBanner');
+  const installBtnAction = document.getElementById('installBtnAction');
+  const installClose = document.getElementById('installClose');
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (!sessionStorage.getItem('installDismissed')) {
+      installBanner.removeAttribute('hidden');
+      setTimeout(() => installBanner.classList.add('visible'), 500);
+    }
+  });
+
+  installBtnAction.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    installBanner.classList.remove('visible');
+    setTimeout(() => installBanner.setAttribute('hidden', ''), 400);
+  });
+
+  installClose.addEventListener('click', () => {
+    sessionStorage.setItem('installDismissed', '1');
+    installBanner.classList.remove('visible');
+    setTimeout(() => installBanner.setAttribute('hidden', ''), 400);
+  });
+
+  window.addEventListener('appinstalled', () => {
+    installBanner.classList.remove('visible');
+    setTimeout(() => installBanner.setAttribute('hidden', ''), 400);
+  });
+
+})();
+</script>
+
+</body>
+</html>
